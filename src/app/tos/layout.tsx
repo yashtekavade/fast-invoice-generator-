@@ -1,0 +1,188 @@
+import { Footer } from "@/app/(components)/footer";
+import { Header } from "@/app/(components)/header";
+import {
+  GITHUB_URL,
+  PERSONAL_WEBSITE_URL,
+  STATIC_ASSETS_URL,
+  TWITTER_CREATOR,
+} from "@/config";
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export const dynamic = "force-static";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | FastInvoiceGenerator",
+  description:
+    "Terms of Service for FastInvoiceGenerator.com. Browser-based invoice PDF tool.",
+  keywords: [
+    "terms of service",
+    "easyinvoicepdf",
+    "invoice generator",
+    "legal",
+  ],
+  authors: [{ name: "Uladzislau Sazonau", url: PERSONAL_WEBSITE_URL }],
+  creator: "Uladzislau Sazonau",
+  publisher: "Uladzislau Sazonau",
+  alternates: {
+    canonical: "https://easyinvoicepdf.com/tos",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title: "Terms of Service | FastInvoiceGenerator",
+    description:
+      "Terms of Service for FastInvoiceGenerator.com. Browser-based invoice PDF tool.",
+    siteName: "FastInvoiceGenerator.com | Free Invoice PDF Generator",
+    type: "website",
+    locale: "en_US",
+    url: "https://easyinvoicepdf.com/tos",
+    images: [
+      {
+        url: `${STATIC_ASSETS_URL}/easy-invoice-opengraph-image.png?v=1755773879597`,
+        type: "image/png",
+        width: 1200,
+        height: 630,
+        alt: "FastInvoiceGenerator.com - Free Invoice PDF Generator",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service | FastInvoiceGenerator",
+    description:
+      "Terms of Service for FastInvoiceGenerator.com. Browser-based invoice PDF tool.",
+    creator: TWITTER_CREATOR,
+    images: [
+      {
+        url: `${STATIC_ASSETS_URL}/easy-invoice-opengraph-image.png?v=1755773879597`,
+        type: "image/png",
+        width: 1200,
+        height: 630,
+        alt: "FastInvoiceGenerator.com - Free Invoice PDF Generator",
+      },
+    ],
+  },
+};
+
+interface TosLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function TosLayout({ children }: TosLayoutProps) {
+  return (
+    <>
+      <Header
+        locale={"en"}
+        translations={{
+          navLinks: {
+            home: "Home",
+            features: "Features",
+            faq: "FAQ",
+            github: "GitHub",
+            githubCTA: "Star on GitHub",
+            tagline: "Free & Open-Source Invoice Generator",
+          },
+          switchLanguageText: "Switch Language",
+          goToAppText: "Open app",
+          startInvoicingButtonText: "Start Invoicing",
+          changelogLinkText: "Changelog",
+          termsOfServiceLinkText: "Terms of Service",
+        }}
+        hideLanguageSwitcher={true}
+      />
+      {children}
+      <Footer
+        translations={{
+          footerDescription: (
+            <>
+              Create professional invoices in seconds with our free &
+              open-source invoice maker. 100% in-browser, no sign-up required.
+              Includes live PDF preview and a Stripe-style template - perfect
+              for freelancers, startups, and small businesses.
+              <br /> <br />
+              Not accounting software. No compliance guarantees. By using this
+              tool, you agree to the{" "}
+              <Link
+                href="/tos"
+                className="text-slate-700 underline hover:text-slate-900"
+              >
+                Terms of Service
+              </Link>
+              .
+            </>
+          ),
+          footerCreatedBy: "Made by",
+          resources: "Resources",
+        }}
+        links={
+          <ul className="space-y-2">
+            <li>
+              <Link
+                href="/?template=default"
+                className="text-sm text-slate-500 hover:text-slate-900"
+              >
+                App
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/en/about"
+                className="text-sm text-slate-500 hover:text-slate-900"
+              >
+                Home
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-slate-500 hover:text-slate-900"
+              >
+                GitHub
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/tos"
+                className="text-sm text-slate-500 hover:text-slate-900"
+              >
+                Terms of Service
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="https://pdfinvoicegenerator.userjot.com/?cursor=1&order=top&limit=10"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-slate-500 hover:text-slate-900"
+              >
+                Share feedback
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/founder"
+                className="text-sm text-slate-500 hover:text-slate-900"
+              >
+                Founder
+              </Link>
+            </li>
+          </ul>
+        }
+      />
+    </>
+  );
+}
