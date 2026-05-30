@@ -1,5 +1,0 @@
-# Fast Invoice Generator
-
-This repository contains the source code for the Fast Invoice Generator application.
-It provides a web-based tool to create professional invoices with PDF preview and download.
-The project uses Next.js, TypeScript, Tailwind CSS, shadcn/ui, and @react-pdf/renderer.

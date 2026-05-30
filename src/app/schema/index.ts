@@ -726,8 +726,12 @@ export const invoiceItemSchema = z.object({
   // Show/hide Number column on PDF
   invoiceItemNumberIsVisible: z.boolean().default(true),
 
+  hsnSacCode: z.string().max(8, "HSN/SAC must not exceed 8 characters").optional(),
+  gstRate: z.coerce.number().optional(),
+
   name: z
     .string()
+    .min(1, "Item name is required")
     .max(500, "Item name must not exceed 500 characters")
     .trim()
     .optional(),
@@ -857,6 +861,8 @@ export const sellerSchema = z.object({
     .min(1, "Seller address is required")
     .max(500, "Seller address must not exceed 500 characters")
     .trim(),
+  gstin: z.string().optional(),
+  pan: z.string().optional(),
 
   vatNo: z
     .string()
@@ -921,6 +927,8 @@ export const buyerSchema = z.object({
     .min(1, "Buyer address is required")
     .max(500, "Buyer address must not exceed 500 characters")
     .trim(),
+  gstin: z.string().optional(),
+  pan: z.string().optional(),
   vatNo: z
     .string()
     .max(200, "VAT number must not exceed 200 characters")
@@ -1173,6 +1181,11 @@ export const invoiceSchema = z.object({
     .optional()
     .default(""),
   personAuthorizedToIssueFieldIsVisible: z.boolean().default(true),
+
+  // GST Fields
+  isGstInvoice: z.boolean().default(false),
+  placeOfSupply: z.string().optional(),
+  reverseCharge: z.boolean().default(false),
 });
 
 export type InvoiceData = z.infer<typeof invoiceSchema>;

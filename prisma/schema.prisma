@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  plan      Plan     @default(FREE)
+  gstin     String?
+  pan       String?
+  stateCode String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  invoices  Invoice[]
+  clients   Client[]
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  email     String
+  company   String?
+  address   String?
+  taxId     String?
+  gstin     String?
+  pan       String?
+  stateCode String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  invoices  Invoice[]
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  userId        String
+  clientId      String?
+  number        String
+  status        InvoiceStatus @default(DRAFT)
+  currency      String        @default("INR")
+  issueDate     DateTime
+  dueDate       DateTime
+  notes         String?
+  taxRate       Float?
+  discountRate  Float?
+  pdfUrl        String?
+  totalAmount   Float
+  isGstInvoice  Boolean       @default(false)
+  placeOfSupply String?
+  reverseCharge Boolean       @default(false)
+  cgstAmount    Float?
+  sgstAmount    Float?
+  igstAmount    Float?
+  irnNumber     String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id])
+  client    Client?    @relation(fields: [clientId], references: [id])
+  lineItems LineItem[]
+  signature Signature?
+}
+
+model LineItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Float
+  unitPrice   Float
+  taxRate     Float?
+  hsnSacCode  String?
+  cgstRate    Float?
+  sgstRate    Float?
+  igstRate    Float?
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model Signature {
+  id             String          @id @default(cuid())
+  invoiceId      String          @unique
+  documensoDocId String?
+  signingUrl     String?
+  status         SignatureStatus @default(PENDING)
+  signedAt       DateTime?
+  signedPdfUrl   String?
+  createdAt      DateTime        @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  SIGNING
+  SIGNED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum SignatureStatus {
+  PENDING
+  VIEWED
+  COMPLETED
+  REJECTED
+}
+
+enum Plan {
+  FREE
+  PRO
+}

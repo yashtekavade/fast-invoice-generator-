@@ -27,10 +27,10 @@ export const env = createEnv({
 
     INVOICE_NET_PRICE: z.string(),
     INVOICE_EMAIL_RECIPIENT: z.string().email(),
-    INVOICE_EMAIL_COMPANY_TO: z.string().email(),
+    INVOICE_EMAIL_COMPANY_TO: z.string(),
 
     GOOGLE_DRIVE_PARENT_FOLDER_ID: z.string(),
-    GOOGLE_DRIVE_CLIENT_EMAIL: z.string().email(),
+    GOOGLE_DRIVE_CLIENT_EMAIL: z.string(),
     GOOGLE_DRIVE_PRIVATE_KEY: z.string(),
 
     GITHUB_TOKEN: z.string(),

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm public/llms.txt)",
+      "Bash(pnpm add *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\yasht\\Downloads\\fast-invoice-generator-\\public"
+    ]
+  }
+}

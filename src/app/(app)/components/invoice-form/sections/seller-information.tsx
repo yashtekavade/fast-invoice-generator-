@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomTooltip } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { Info, CheckCircle2, XCircle } from "lucide-react";
 import { memo, useState } from "react";
 import {
   type Control,
@@ -15,6 +15,60 @@ import {
   type FieldErrors,
   type UseFormSetValue,
 } from "react-hook-form";
+import { GSTIN_REGEX } from "@/lib/gst";
+
+type GSTINInputProps = {
+  control: Control<InvoiceData>;
+  name: "seller.gstin" | "buyer.gstin";
+  errors: FieldErrors<InvoiceData>;
+};
+
+const GSTINInput = ({ control, name, errors }: GSTINInputProps) => {
+  const [isValid, setIsValid] = useState<boolean | null>(null);
+
+  const validateGstin = (value: string | undefined) => {
+    if (!value) {
+      setIsValid(null);
+      return;
+    }
+    const valid = GSTIN_REGEX.test(value);
+    setIsValid(valid);
+    if (!valid) {
+      return "Invalid GSTIN format";
+    }
+    return true;
+  };
+
+  return (
+    <div className="relative">
+      <Controller
+        name={name}
+        control={control}
+        rules={{ validate: validateGstin }}
+        render={({ field }) => (
+          <Input
+            {...field}
+            value={field.value ?? ""}
+            id={name}
+            type="text"
+            placeholder="Enter GSTIN"
+            className="mt-1 block w-full pr-10"
+            onBlur={() => control.trigger(name)}
+          />
+        )}
+      />
+      {isValid === true && (
+        <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+      )}
+      {isValid === false && (
+        <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-red-500" />
+      )}
+      {errors.seller?.gstin && (
+        <ErrorMessage>{errors.seller.gstin.message}</ErrorMessage>
+      )}
+    </div>
+  );
+};
 
 const ErrorMessage = ({ children }: { children: React.ReactNode }) => {
   return <p className="mt-1 text-xs text-red-600">{children}</p>;
@@ -111,6 +165,32 @@ export const SellerInformation = memo(function SellerInformation({
             />
             {errors.seller?.address && (
               <ErrorMessage>{errors.seller.address.message}</ErrorMessage>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="seller.gstin">GSTIN</Label>
+            <GSTINInput control={control} name="seller.gstin" errors={errors} />
+          </div>
+
+          <div>
+            <Label htmlFor="sellerPan">PAN</Label>
+            <Controller
+              name="seller.pan"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="sellerPan"
+                  type="text"
+                  placeholder="Enter PAN"
+                  className="mt-1 block w-full"
+                  value={field.value ?? ""}
+                />
+              )}
+            />
+            {errors.seller?.pan && (
+              <ErrorMessage>{errors.seller.pan.message}</ErrorMessage>
             )}
           </div>
 

@@ -1,44 +1,64 @@
+```markdown
 # PROJECT.md
 
 ## Product
 
-**InvoiceFlow** — An open-source, production-grade invoice generator with built-in digital signature support via [Documenso](https://github.com/documenso/documenso).
+**InvoiceFlow** — A free, open-source invoice generator with digital signature support and full Indian GST compliance.
 
-Free for self-hosters. Clean, minimal UI. Batteries included.
+Self-hostable. MIT licensed. No lock-in. Built for freelancers, consultants, and small businesses in India and globally.
 
 ---
 
 ## Target Users
 
-- Freelancers and consultants who need fast, professional invoicing
-- Small businesses that want a self-hosted alternative to FreshBooks / Invoice Ninja
-- Developers who want to extend or white-label an invoice tool
-- Open-source contributors who want a real-world Next.js + Supabase reference project
+- Indian freelancers and consultants who need GST-compliant invoices fast
+- Small businesses wanting a self-hosted alternative to Zoho Invoice / FreshBooks
+- Developers who want a clean Next.js + Supabase reference project to extend or contribute to
 
 ---
 
-## Core Features
+## Core Features (v1.0 — what we're building)
 
-### MVP (v1.0)
+### Invoice builder
 - [ ] Auth (email + OAuth via Supabase)
-- [ ] Invoice builder — line items, tax, discount, currency
-- [ ] Invoice templates — Minimal, Professional, Modern
-- [ ] PDF generation (react-pdf or Puppeteer)
+- [ ] Invoice builder — line items, tax, discount, currency (INR default)
+- [ ] Invoice templates — Minimal, Professional, India GST
+- [ ] PDF generation
 - [ ] Invoice status lifecycle: Draft → Sent → Signed → Paid → Overdue
-- [ ] Documenso integration — send invoice PDF for digital signature
-- [ ] Signature webhook — auto-update invoice status when signed
-- [ ] Email delivery (Resend)
-- [ ] Client management — save recurring client details
-- [ ] Dashboard — invoice list, summary stats
+- [ ] Client management
 
-### Post-MVP (v1.x)
-- [ ] Recurring invoices
-- [ ] Payment link (Stripe)
-- [ ] Multi-currency
-- [ ] Custom branding per invoice
-- [ ] Community template registry
-- [ ] API access for power users
-- [ ] Multi-user / team workspaces
+### India GST compliance
+- [ ] GSTIN field + format validation (seller + buyer)
+- [ ] PAN field on invoices
+- [ ] CGST / SGST / IGST auto-calculation based on place of supply
+- [ ] HSN / SAC code per line item
+- [ ] Reverse charge mechanism flag
+- [ ] Tax amount in words (Indian number format)
+- [ ] Invoice numbering per financial year (Apr–Mar)
+- [ ] India GST invoice template (all mandatory fields)
+
+### Digital signature (optional layer)
+- [ ] Documenso integration — request signature on invoice PDF
+- [ ] Webhook — auto-update invoice status when signed
+- [ ] Download signed PDF
+
+### Platform
+- [ ] Dashboard — invoice list, summary stats
+- [ ] Email notifications (Resend)
+- [ ] Settings — profile, GSTIN, PAN, Documenso config
+
+---
+
+## What's NOT in v1.0
+
+These are explicitly out of scope to keep v1.0 shippable:
+
+- Recurring invoices
+- Stripe payment links
+- Multi-user / team workspaces
+- e-Invoice IRN generation (schema fields reserved, API not implemented)
+- Community template registry
+- Public API
 
 ---
 
@@ -46,56 +66,41 @@ Free for self-hosters. Clean, minimal UI. Batteries included.
 
 | Layer | Tool |
 |---|---|
-| Frontend | Next.js 14 (App Router), TailwindCSS, shadcn/ui, Framer Motion |
+| Frontend | Next.js 14 (App Router), TailwindCSS, shadcn/ui |
 | Forms | React Hook Form + Zod |
-| State | Zustand (client state only) |
-| Backend | Next.js API routes (server actions where possible) |
+| State | Zustand (client only) |
+| Backend | Next.js API routes + server actions |
 | ORM | Prisma |
-| Database | PostgreSQL (via Supabase) |
+| Database | PostgreSQL via Supabase |
 | Auth | Supabase Auth |
-| Storage | Supabase Storage (PDF files) |
-| PDF | react-pdf (preview) + Puppeteer (final render) |
-| Signatures | Documenso API (self-hosted or cloud) |
+| Storage | Supabase Storage |
+| PDF | react-pdf (preview) + Puppeteer (final) |
+| Signatures | Documenso (optional, self-hosted or cloud) |
 | Email | Resend |
 | Deploy | Vercel |
-| Monitoring | Sentry (errors), PostHog (analytics) |
+| Monitoring | Sentry + PostHog |
 | Testing | Playwright (e2e), Vitest (unit) |
 
 ---
 
 ## Coding Standards
 
-- TypeScript strict mode — zero `any`
+- TypeScript strict — zero `any`
 - Feature-based folder structure under `features/`
-- Business logic lives in `services/` and `features/*/api/` — never in components
-- All forms validated with Zod schemas
-- Every API route validates input server-side (never trust the client)
+- Business logic in `services/` only — never in components
+- All forms validated with Zod
+- Every API route validates server-side
 - Mobile-first responsive UI
-- Loading and error states on every async operation
-- Accessible components (aria labels, keyboard nav, focus management)
-- Commits follow conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`
+- Loading + error states on every async op
+- Accessible (aria, keyboard nav, focus management)
+- Conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`
 
 ---
 
-## Documenso Integration Strategy
+## Open Source Goals
 
-InvoiceFlow integrates Documenso as an **optional signing layer**. Users can:
-
-1. Generate a PDF invoice
-2. Click "Request Signature" — this calls our `/api/signatures/send` route
-3. The route uploads the PDF to Documenso via its API and creates a document
-4. The client receives an email from Documenso with the signing link
-5. On signature completion, Documenso calls our `/api/webhooks/documenso` endpoint
-6. We update the invoice status to `SIGNED` and notify the sender
-
-Self-hosters can point `DOCUMENSO_API_URL` at their own instance. Cloud users use the Documenso SaaS API.
-
----
-
-## Open Source Differentiators
-
-1. 100% open source (MIT license)
-2. Self-hostable in one `docker-compose up`
-3. Community invoice templates
-4. Documenso (also open source) for signatures — no proprietary lock-in
-5. Clean, documented codebase designed for contribution
+- MIT license
+- Self-hostable via `docker-compose up`
+- Clean, documented codebase — built to be contributed to
+- Documenso for signatures — no proprietary lock-in
+- India GST compliance baked in — not an afterthought

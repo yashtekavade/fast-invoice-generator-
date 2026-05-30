@@ -42,6 +42,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { INVOICE_PDF_TRANSLATIONS } from "@/app/(app)/pdf-i18n-translations/pdf-translations";
+import { GST_RATES } from "@/lib/gst";
+import { useWatch } from "react-hook-form";
 
 const ErrorMessage = ({ children }: { children: React.ReactNode }) => {
   return <p className="mt-1 text-xs text-red-600">{children}</p>;
@@ -105,6 +107,8 @@ export const InvoiceItems = memo(function InvoiceItems({
     toast.success("Item saved to catalog");
   };
 
+  const isGstInvoice = useWatch({ control, name: "isGstInvoice" });
+
   return (
     <>
       {fields.map((field, index) => {
@@ -159,6 +163,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                   className="w-full text-sm h-8"
                   onChange={(e) => handleApplySavedItem(index, e.target.value)}
                   defaultValue=""
+                  value={field.value ?? ""}
                 >
                   <option value="">Select a saved item...</option>
                   {savedCatalogItems.map(item => (
@@ -217,6 +222,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                       rows={4}
                       id={`itemName${index}`}
                       className=""
+                      value={field.value ?? ""}
                     />
                   )}
                 />
@@ -226,6 +232,54 @@ export const InvoiceItems = memo(function InvoiceItems({
                   </ErrorMessage>
                 )}
               </div>
+
+              {isGstInvoice && (
+                <>
+                  <div>
+                    <Label htmlFor={`items.${index}.hsnSacCode`}>HSN/SAC Code</Label>
+                    <Controller
+                      name={`items.${index}.hsnSacCode`}
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          id={`items.${index}.hsnSacCode`}
+                          type="text"
+                          maxLength={8}
+                          placeholder="Enter HSN/SAC Code"
+                          className="mt-1 block w-full"
+                          value={field.value ?? ""}
+                        />
+                      )}
+                    />
+                    {errors.items?.[index]?.hsnSacCode && (
+                      <ErrorMessage>
+                        {errors.items?.[index]?.hsnSacCode?.message}
+                      </ErrorMessage>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor={`items.${index}.gstRate`}>GST Rate</Label>
+                    <Controller
+                      name={`items.${index}.gstRate`}
+                      control={control}
+                      render={({ field }) => (
+                        <SelectNative {...field} id={`items.${index}.gstRate`} className="block" value={field.value ?? ""}>
+                          <option value="">Select GST Rate</option>
+                          {GST_RATES.map(rate => (
+                            <option key={rate} value={rate}>{rate}%</option>
+                          ))}
+                        </SelectNative>
+                      )}
+                    />
+                    {errors.items?.[index]?.gstRate && (
+                      <ErrorMessage>
+                        {errors.items?.[index]?.gstRate?.message}
+                      </ErrorMessage>
+                    )}
+                  </div>
+                </>
+              )}
 
               {/* Invoice Item Type of GTU - Only show for default template */}
               {template === "default" && (
@@ -278,6 +332,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                         id={`itemTypeOfGTU${index}`}
                         className=""
                         type="text"
+                        value={field.value ?? ""}
                       />
                     )}
                   />
@@ -346,6 +401,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                           step="0.01"
                           min="0"
                           className=""
+                          value={field.value ?? ""}
                         />
                         {!errors.items?.[index]?.amount && (
                           <InputHelperMessage>
@@ -404,7 +460,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                   name={`items.${index}.unit`}
                   control={control}
                   render={({ field }) => (
-                    <Input {...field} id={`itemUnit${index}`} type="text" />
+                    <Input {...field} id={`itemUnit${index}`} type="text" value={field.value ?? ""} />
                   )}
                 />
                 {errors.items?.[index]?.unit && (
@@ -552,6 +608,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                         id="taxLabelText"
                         placeholder="Enter tax label (e.g., VAT, Tax, GST, Sales Tax)"
                         className="mt-1 block w-full"
+                        value={field.value ?? ""}
                       />
                     )}
                   />
@@ -583,6 +640,7 @@ export const InvoiceItems = memo(function InvoiceItems({
                         id={`itemVat${index}`}
                         type="text"
                         className=""
+                        value={field.value ?? ""}
                       />
                     )}
                   />

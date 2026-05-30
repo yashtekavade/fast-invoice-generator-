@@ -37,6 +37,10 @@ import { toast } from "sonner";
 
 const CURRENT_MONTH_AND_YEAR = dayjs().format("MM-YYYY");
 
+import {
+  INDIAN_STATE_CODES,
+} from "@/lib/gst";
+
 interface GeneralInformationProps {
   control: Control<InvoiceData>;
   errors: FieldErrors<InvoiceData>;
@@ -160,6 +164,79 @@ export const GeneralInformation = memo(function GeneralInformation({
   return (
     <div>
       <div className="space-y-4">
+        {/* GST Invoice Toggle */}
+        <div className="flex items-center justify-between rounded-md border p-4">
+          <Label htmlFor="isGstInvoice" className="flex flex-col space-y-1">
+            <span>India GST Invoice</span>
+            <span className="font-normal leading-snug text-muted-foreground">
+              Enable for Indian Goods and Services Tax compliance.
+            </span>
+          </Label>
+          <Controller
+            name="isGstInvoice"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                id="isGstInvoice"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+
+        {useWatch({ control, name: "isGstInvoice" }) && (
+          <div className="space-y-4 rounded-md border p-4">
+            {/* Place of Supply */}
+            <div>
+              <Label htmlFor="placeOfSupply">Place of Supply</Label>
+              <Controller
+                name="placeOfSupply"
+                control={control}
+                render={({ field }) => (
+                  <SelectNative
+                    {...field}
+                    id="placeOfSupply"
+                    className="block"
+                    value={field.value ?? ""}
+                  >
+                    <option value="">Select State/UT</option>
+                    {Object.entries(INDIAN_STATE_CODES).map(([code, name]) => (
+                      <option key={code} value={code}>
+                        {`${code} - ${name}`}
+                      </option>
+                    ))}
+                  </SelectNative>
+                )}
+              />
+              {errors.placeOfSupply && (
+                <ErrorMessage>{errors.placeOfSupply.message}</ErrorMessage>
+              )}
+            </div>
+
+            {/* Reverse Charge */}
+            <div className="flex items-center justify-between">
+              <Label htmlFor="reverseCharge" className="flex flex-col space-y-1">
+                <span>Reverse Charge</span>
+                <span className="font-normal leading-snug text-muted-foreground">
+                  Check if reverse charge mechanism is applicable.
+                </span>
+              </Label>
+              <Controller
+                name="reverseCharge"
+                control={control}
+                render={({ field }) => (
+                  <Switch
+                    id="reverseCharge"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Invoice Template Selection */}
         <div>
           <Label htmlFor={`template`} className="mb-1">
